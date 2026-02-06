@@ -3,5 +3,10 @@
     "fruits" : [ "\"apple\"", "\"banana\"", "mango" ],
     "passwordHash" : "$2a$10$SolWTjTCbbVNd.7E3qiM3eZ5gemTbTZ8KhxyrK1PRb.USFU5A71xa",
     "username" : "harsh"
+  },
+  "harsh-jwt" : {
+    "fruits" : [ "kiwi" ],
+    "passwordHash" : "$2a$10$qbulk9kLE887SOakX/ivJ.1OPabzGl0X3urOFYSNGIBXN3q0nIuN6",
+    "username" : "harsh-jwt"
   }
 }

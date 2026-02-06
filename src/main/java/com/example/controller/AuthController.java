@@ -4,6 +4,7 @@ import com.example.DAO.UserRepository;
 import com.example.bean.User;
 import com.example.dto.LoginRequest;
 import com.example.dto.SignupRequest;
+import com.example.security.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseCookie;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class AuthController {
@@ -59,9 +62,9 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @RequestBody LoginRequest req,
-            HttpServletRequest request,
             HttpServletResponse response
-    ) {
+            ) {
+
         User user = repo.findByUsername(req.username())
                 .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
@@ -69,28 +72,21 @@ public class AuthController {
             return ResponseEntity.status(401).body("Invalid credentials");
         }
 
-        // 1️⃣ Create Authentication
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        user.getUsername(),
-                        null,
-                        List.of()
-                );
+        String token = JwtUtil.generateToken(user.getUsername());
 
-        // 2️⃣ Create SecurityContext
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(authentication);
+        ResponseCookie cookie = ResponseCookie.from("access_token", token)
+                .httpOnly(true)
+                .secure(false) // true in production (HTTPS)
+                .path("/")
+                .sameSite("Strict")
+                .maxAge(15 * 60) // 15 minutes
+                .build();
 
-        // 3️⃣ Force session creation
-        request.getSession(true);
+        response.addHeader("Set-Cookie", cookie.toString());
 
-        // 4️⃣ Persist SecurityContext properly
-        HttpSessionSecurityContextRepository securityContextRepo =
-                new HttpSessionSecurityContextRepository();
-
-        securityContextRepo.saveContext(context, request, response);
-
-        return ResponseEntity.ok("Login successful");
+        return ResponseEntity.ok(
+                Map.of("accessToken", token)
+        );
     }
 
 
