@@ -1,11 +1,13 @@
 package com.example.bean;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 public class User {
     private String username;
     private String passwordHash;
+
     private List<String> fruits = new ArrayList<>();
 
     public String getUsername() {
