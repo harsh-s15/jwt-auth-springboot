@@ -21,7 +21,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return path.equals("/login")
                 || path.equals("/signup")
                 || path.equals("/logout")
-                || path.equals("/home");
+                || path.equals("/home")
+                || path.equals("/refresh");
     }
 
     @Override

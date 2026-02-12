@@ -38,7 +38,7 @@ public class SecurityConfig {
                                 res.setStatus(HttpServletResponse.SC_UNAUTHORIZED))
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/signup", "/logout", "/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/signup", "/logout", "/login", "/refresh").permitAll()
                         .requestMatchers(HttpMethod.GET, "/home").permitAll()
                         .anyRequest().authenticated()
                 )
